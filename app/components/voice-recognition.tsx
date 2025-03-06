@@ -46,6 +46,8 @@ export default function VoiceRecognition({ onResult }: VoiceRecognitionProps) {
         icon={isListening ? "microphone-off" : "microphone"} 
         size={40}
         iconColor={isListening ? "#E53935" : "#4CAF50"}
+        mode="contained"
+        containerColor="transparent"
         onPress={toggleListening}
       />
       <Text>{isListening ? 'Listening...' : 'Tap to speak'}</Text>
