@@ -45,25 +45,13 @@ export default function ServiceSelection() {
     command?.service || null
   );
 
-  // In service-selection.tsx, update the handleContinue function
-// const handleContinue = () => {
-//   if (selectedService) {
-//     router.push({
-//       pathname: '/screens/branch-selection', // Changed from stylist-selection
-//       params: {
-//         serviceId: selectedService,
-//         command: JSON.stringify(command)
-//       }
-//     });
-//   }
-// };
   const handleContinue = () => {
     if (selectedService) {
       router.push({
-        pathname: '/screens/stylist-selection',
+        pathname: '/screens/branch-selection', // Changed from stylist-selection
         params: {
           serviceId: selectedService,
-          command: command ? JSON.stringify(command) : undefined
+          command: JSON.stringify(command)
         }
       });
     }

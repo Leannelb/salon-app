@@ -11,6 +11,7 @@ type Stylist = {
   specialties: string[];
   imageUrl?: string;
   experience?: string;
+  branches: string[];
 };
 
 type Service = {
@@ -30,6 +31,7 @@ const stylists: Stylist[] = [
     id: '1',
     name: 'John',
     specialties: ['1', '3'],
+    branches: ['downtown', 'uptown'],
     imageUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
     experience: '6 years'
   },
@@ -37,6 +39,7 @@ const stylists: Stylist[] = [
     id: '2',
     name: 'Sarah',
     specialties: ['1', '2', '3'],
+    branches: ['downtown', 'uptown'],
     imageUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
     experience: '8 years'
   },
@@ -44,6 +47,7 @@ const stylists: Stylist[] = [
     id: '3',
     name: 'Michael',
     specialties: ['1'],
+    branches: ['downtown'],
     imageUrl: 'https://randomuser.me/api/portraits/men/68.jpg',
     experience: '4 years'
   },
@@ -51,6 +55,7 @@ const stylists: Stylist[] = [
     id: '4',
     name: 'Jessica',
     specialties: ['2', '3'],
+    branches: ['uptown'],
     imageUrl: 'https://randomuser.me/api/portraits/women/65.jpg',
     experience: '7 years'
   }
@@ -60,6 +65,7 @@ export default function StylistSelection() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const serviceId = params.serviceId as string;
+  const branchId = params.branchId as string;
   const command = params.command ? JSON.parse(params.command as string) as CommandResult : null;
   const [selectedStylist, setSelectedStylist] = useState<string | null>(
     command?.stylist || null
@@ -67,9 +73,10 @@ export default function StylistSelection() {
   const [availableStylists, setAvailableStylists] = useState<Stylist[]>([]);
   
   useEffect(() => {
-    // Filter stylists who can perform this service
+    // Filter stylists who can perform this service AND work at this branch
     const filtered = stylists.filter(stylist => 
-      stylist.specialties.includes(serviceId)
+      stylist.specialties.includes(serviceId) && 
+      stylist.branches.includes(branchId) 
     );
     setAvailableStylists(filtered);
     
@@ -80,7 +87,7 @@ export default function StylistSelection() {
         setSelectedStylist(null);
       }
     }
-  }, [serviceId]);
+  }, [serviceId, branchId]);
 
   const handleContinue = () => {
     router.push({
@@ -88,6 +95,7 @@ export default function StylistSelection() {
       params: {
         serviceId,
         stylistId: selectedStylist || 'any',
+        branchId, 
         command: command ? JSON.stringify(command) : undefined
       }
     });
