@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, Alert } from 'react-native';
 import { Text, Card, Button, TextInput, Title, Divider } from 'react-native-paper';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { CommandResult } from '../utils/voice-command-parser';
 
 // Mock data for services and stylists
@@ -20,22 +20,15 @@ const stylists = [
   { id: 'any', name: 'Any Available Stylist' },
 ];
 
-type RootStackParamList = {
-  DateTimeSelection: { serviceId: string, stylistId: string, command: CommandResult };
-  BookingConfirmation: { 
-    serviceId: string,
-    stylistId: string,
-    date: string,
-    time: string,
-    command: CommandResult
-  };
-  BookingComplete: undefined;
-};
-
-type Props = NativeStackScreenProps<RootStackParamList, 'BookingConfirmation'>;
-
-export default function BookingConfirmation({ navigation, route }: Props) {
-  const { serviceId, stylistId, date, time, command } = route.params;
+export default function BookingConfirmation() {
+  const router = useRouter();
+  const params = useLocalSearchParams();
+  
+  const serviceId = params.serviceId as string;
+  const stylistId = params.stylistId as string;
+  const date = params.date as string;
+  const time = params.time as string;
+  const command = params.command ? JSON.parse(params.command as string) as CommandResult : null;
   
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -71,7 +64,7 @@ export default function BookingConfirmation({ navigation, route }: Props) {
     // Simulate API call
     setTimeout(() => {
       setProcessing(false);
-      navigation.navigate('BookingComplete');
+      router.push('/screens/booking-complete');
     }, 1500);
   };
   

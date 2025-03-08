@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, FlatList } from 'react-native';
 import { Text, Card, Button, Title, Chip, ActivityIndicator } from 'react-native-paper';
 import { Calendar } from 'react-native-calendars';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { CommandResult } from '../utils/voice-command-parser';
 
 // Types
@@ -49,22 +49,13 @@ const generateTimeSlots = (date: string, stylistId: string, serviceId: string): 
   return slots;
 };
 
-type RootStackParamList = {
-  StylistSelection: { serviceId: string, command: CommandResult };
-  DateTimeSelection: { serviceId: string, stylistId: string, command: CommandResult };
-  BookingConfirmation: { 
-    serviceId: string,
-    stylistId: string,
-    date: string,
-    time: string,
-    command: CommandResult
-  };
-};
-
-type Props = NativeStackScreenProps<RootStackParamList, 'DateTimeSelection'>;
-
-export default function DateTimeSelection({ navigation, route }: Props) {
-  const { serviceId, stylistId, command } = route.params;
+export default function DateTimeSelection() {
+  const router = useRouter();
+  const params = useLocalSearchParams();
+  
+  const serviceId = params.serviceId as string;
+  const stylistId = params.stylistId as string;
+  const command = params.command ? JSON.parse(params.command as string) as CommandResult : null;
   
   // If date was mentioned in voice command, parse it
   const initialDate = command?.date 
@@ -126,12 +117,15 @@ export default function DateTimeSelection({ navigation, route }: Props) {
   // Handle continue button
   const handleContinue = () => {
     if (selectedDate && selectedTime) {
-      navigation.navigate('BookingConfirmation', {
-        serviceId,
-        stylistId,
-        date: selectedDate,
-        time: selectedTime,
-        command
+      router.push({
+        pathname: '/screens/booking-screen',
+        params: {
+          serviceId,
+          stylistId,
+          date: selectedDate,
+          time: selectedTime,
+          command: command ? JSON.stringify(command) : undefined
+        }
       });
     }
   };

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, Card, Button, Title, Paragraph } from 'react-native-paper';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CommandResult } from '../utils/voice-command-parser';
 import { router, useLocalSearchParams } from 'expo-router';
 
@@ -39,14 +38,6 @@ const services: Service[] = [
   },
 ];
 
-type RootStackParamList = {
-  Booking: undefined;
-  ServiceSelection: { command?: CommandResult };
-  StylistSelection: { serviceId: string, command?: CommandResult };
-};
-
-type Props = NativeStackScreenProps<RootStackParamList, 'ServiceSelection'>;
-
 export default function ServiceSelection() {
   const params = useLocalSearchParams();
   const command = params?.command ? JSON.parse(params.command as string) as CommandResult : null;
@@ -54,6 +45,18 @@ export default function ServiceSelection() {
     command?.service || null
   );
 
+  // In service-selection.tsx, update the handleContinue function
+// const handleContinue = () => {
+//   if (selectedService) {
+//     router.push({
+//       pathname: '/screens/branch-selection', // Changed from stylist-selection
+//       params: {
+//         serviceId: selectedService,
+//         command: JSON.stringify(command)
+//       }
+//     });
+//   }
+// };
   const handleContinue = () => {
     if (selectedService) {
       router.push({

@@ -2,16 +2,11 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, Button, Card, Avatar } from 'react-native-paper';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useRouter } from 'expo-router';
 
-type RootStackParamList = {
-  BookingComplete: undefined;
-  Booking: undefined;
-};
+export default function BookingComplete() {
+  const router = useRouter();
 
-type Props = NativeStackScreenProps<RootStackParamList, 'BookingComplete'>;
-
-export default function BookingComplete({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <Avatar.Icon 
@@ -40,22 +35,22 @@ export default function BookingComplete({ navigation }: Props) {
       
       <Button
         mode="contained"
-        onPress={() => navigation.navigate('Booking')}
+        onPress={() => router.push('/(tabs)/booking')}
         style={styles.button}
       >
         Book Another Appointment
       </Button>
       
-      <Button
+      {/* <Button
         mode="outlined"
         onPress={() => {
           // In a real app, this would navigate to a bookings management screen
-          navigation.navigate('Booking');
+          router.push('/(tabs)/bookings');
         }}
         style={styles.button}
       >
         View My Bookings
-      </Button>
+      </Button> */}
     </View>
   );
 }
