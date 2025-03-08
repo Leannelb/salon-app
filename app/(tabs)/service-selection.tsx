@@ -3,6 +3,7 @@ import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, Card, Button, Title, Paragraph } from 'react-native-paper';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CommandResult } from '../utils/voice-command-parser';
+import { router, useLocalSearchParams } from 'expo-router';
 
 // Service type definition
 type Service = {
@@ -46,17 +47,21 @@ type RootStackParamList = {
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ServiceSelection'>;
 
-export default function ServiceSelection({ navigation, route }: Props) {
-  const command = route?.params?.command || null;
+export default function ServiceSelection() {
+  const params = useLocalSearchParams();
+  const command = params?.command ? JSON.parse(params.command as string) as CommandResult : null;
   const [selectedService, setSelectedService] = useState<string | null>(
     command?.service || null
   );
 
   const handleContinue = () => {
     if (selectedService) {
-      navigation.navigate('StylistSelection', {
-        serviceId: selectedService,
-        command: command || undefined
+      router.push({
+        pathname: '/screens/stylist-selection',
+        params: {
+          serviceId: selectedService,
+          command: command ? JSON.stringify(command) : undefined
+        }
       });
     }
   };
