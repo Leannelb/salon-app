@@ -1,13 +1,31 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, ImageBackground } from "react-native";
 import { Link } from 'expo-router';
+import { Button } from 'react-native-paper';
 
 export default function Index() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Edit app/index.tsx to edit this screen.</Text>
-      <Link href='/about' style={styles.button}>
-        Go to about screen
-      </Link>
+      <ImageBackground
+        source={require('../../assets/images/salon-bg.jpeg')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        <View style={styles.overlay}>
+          <Text style={styles.title}>Welcome to Our Salon</Text>
+          <Text style={styles.subtitle}>Experience luxury and style</Text>
+          <Button
+            mode="contained"
+            onPress={() => {}}
+            style={styles.bookButton}
+            labelStyle={styles.buttonLabel}
+            contentStyle={styles.buttonContent}
+          >
+            <Link href="/service-selection" style={styles.buttonText}>
+              Book Now
+            </Link>
+          </Button>
+        </View>
+      </ImageBackground>
     </View>
   );
 }
@@ -15,16 +33,46 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#26347e',
-    alignItems: 'center',
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
-  text: {
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
     color: '#fff',
+    textAlign: 'center',
+    marginBottom: 10,
   },
-  button: {
-    fontSize: 20,
-    textDecorationLine: 'underline',
-    color: '#fff'
+  subtitle: {
+    fontSize: 18,
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  bookButton: {
+    paddingHorizontal: 32,
+    borderRadius: 25,
+    backgroundColor: '#2196F3',
+  },
+  buttonContent: {
+    height: 50,
+  },
+  buttonLabel: {
+    fontSize: 18,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
