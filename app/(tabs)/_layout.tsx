@@ -20,6 +20,24 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
+				name="booking"
+				options={{
+					title: 'Booking',
+					tabBarIcon: ({ color, focused }) => (
+						<Ionicons name={focused ? 'calendar' : 'calendar-outline'} color={color} size={24} />
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="service-selection"
+				options={{
+					title: 'Services',
+					tabBarIcon: ({ color, focused }) => (
+						<Ionicons name={focused ? 'ribbon' : 'ribbon-outline'} color={color} size={24} />
+					),
+				}}
+			/>
+			<Tabs.Screen
 				name="about"
 				options={{
 					title: 'About',
@@ -28,6 +46,7 @@ export default function TabLayout() {
 					),
 				}}
 			/>
+
 		</Tabs>
 	);
 }
