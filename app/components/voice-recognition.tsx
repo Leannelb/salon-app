@@ -1,38 +1,91 @@
 // components/voice-recognition.tsx
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
 import Voice from '@react-native-voice/voice';
 
+// Add type declarations for Web Speech API
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 type VoiceRecognitionProps = {
   onResult: (text: string) => void;
+  onNavigate?: () => void;
 };
 
-export default function VoiceRecognition({ onResult }: VoiceRecognitionProps) {
+export default function VoiceRecognition({ onResult, onNavigate }: VoiceRecognitionProps) {
   const [isListening, setIsListening] = useState(false);
   const [text, setText] = useState('');
+  const [webSpeechRecognition, setWebSpeechRecognition] = useState<any>(null);
 
   useEffect(() => {
-    function onSpeechResults(e: any) {
-      setText(e.value[0]);
-      if (onResult) onResult(e.value[0]);
-    }
+    if (Platform.OS === 'web') {
+      // Setup Web Speech API
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
 
-    Voice.onSpeechResults = onSpeechResults;
-    return () => {
-      Voice.destroy().then(Voice.removeAllListeners);
-    };
-  }, []);
+        recognition.onresult = (event: any) => {
+          const result = event.results[0][0].transcript;
+          setText(result);
+          if (onResult) {
+            onResult(result);
+            if (onNavigate) onNavigate();
+          }
+        };
+
+        recognition.onend = () => {
+          setIsListening(false);
+        };
+
+        setWebSpeechRecognition(recognition);
+      }
+    } else {
+      // Setup React Native Voice
+      function onSpeechResults(e: any) {
+        setText(e.value[0]);
+        if (onResult) {
+          onResult(e.value[0]);
+          if (onNavigate) onNavigate();
+        }
+      }
+
+      Voice.onSpeechResults = onSpeechResults;
+      return () => {
+        Voice.destroy().then(Voice.removeAllListeners);
+      };
+    }
+  }, [onResult, onNavigate]);
 
   const toggleListening = async () => {
     try {
       if (isListening) {
-        await Voice.stop();
+        if (Platform.OS === 'web') {
+          webSpeechRecognition?.stop();
+        } else {
+          await Voice.stop();
+        }
         setIsListening(false);
       } else {
         setText('');
-        await Voice.start('en-US');
-        setIsListening(true);
+        if (Platform.OS === 'web') {
+          if (webSpeechRecognition) {
+            webSpeechRecognition.start();
+            setIsListening(true);
+          } else {
+            setText('Speech recognition not supported in this browser');
+          }
+        } else {
+          await Voice.start('en-US');
+          setIsListening(true);
+        }
       }
     } catch (e) {
       console.error(e);

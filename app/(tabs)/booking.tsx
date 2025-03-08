@@ -3,29 +3,31 @@ import { StyleSheet, View } from 'react-native';
 import { Text, Card, Button } from 'react-native-paper';
 import VoiceRecognition from '../components/voice-recognition';
 import { parseVoiceCommand, CommandResult } from '../utils/voice-command-parser';
-import { useState } from 'react';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'expo-router';
 
-type RootStackParamList = {
-    Home: undefined;
-    Booking: undefined;
-    ServiceSelection: { command: CommandResult };
-};
-
-type Props = NativeStackScreenProps<RootStackParamList, 'Booking'>;
-
-export default function Booking({ navigation }: Props) {
+export default function Booking() {
     const [lastCommand, setLastCommand] = useState<CommandResult | null>(null);
+    const [shouldNavigate, setShouldNavigate] = useState(false);
+    const router = useRouter();
 
     const handleVoiceResult = (text: string) => {
         const parsedCommand = parseVoiceCommand(text);
         setLastCommand(parsedCommand);
-
-        // Navigate based on command
-        if (parsedCommand.intent === 'booking') {
-            navigation.navigate('ServiceSelection', { command: parsedCommand });
-        }
+        setShouldNavigate(parsedCommand.intent === 'booking');
     };
+
+    useEffect(() => {
+        if (shouldNavigate && lastCommand) {
+            router.push({
+                pathname: '/service-selection',
+                params: { 
+                    command: JSON.stringify(lastCommand)
+                }
+            });
+            setShouldNavigate(false);
+        }
+    }, [shouldNavigate, lastCommand]);
 
     return (
         <View style={styles.container}>
@@ -38,7 +40,9 @@ export default function Booking({ navigation }: Props) {
                 </Card.Content>
             </Card>
 
-            <VoiceRecognition onResult={handleVoiceResult} />
+            <VoiceRecognition 
+                onResult={handleVoiceResult}
+            />
 
             {lastCommand && (
                 <Card style={styles.resultCard}>
@@ -55,7 +59,12 @@ export default function Booking({ navigation }: Props) {
 
             <Button
                 mode="contained"
-                onPress={() => navigation.navigate('ServiceSelection', { command: lastCommand || {} as CommandResult })}
+                onPress={() => router.push({
+                    pathname: '/service-selection',
+                    params: { 
+                        command: lastCommand ? JSON.stringify(lastCommand) : JSON.stringify({} as CommandResult)
+                    }
+                })}
                 style={styles.button}
             >
                 Start Booking
