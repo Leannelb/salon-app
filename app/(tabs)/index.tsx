@@ -2,15 +2,18 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, ImageBackground, ScrollView } from "react-native";
 import { Link, useRouter } from 'expo-router';
-import { Button, Card, IconButton, Modal, Portal } from 'react-native-paper';
+import { Button, useTheme, Card, IconButton, Modal, Portal } from 'react-native-paper';
 import VoiceRecognition from '../components/voice-recognition';
 import { parseVoiceCommand, CommandResult } from '../utils/voice-command-parser';
+import { Dimensions, Platform } from 'react-native';
 
 export default function Index() {
   const [lastCommand, setLastCommand] = useState<CommandResult | null>(null);
   const [shouldNavigate, setShouldNavigate] = useState(false);
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
   const router = useRouter();
+  const screenWidth = Dimensions.get('window').width;
+  const isSmallScreen = screenWidth < 380; 
 
   // Handle voice command results
   const handleVoiceResult = (text: string) => {
@@ -59,14 +62,14 @@ export default function Index() {
             labelStyle={styles.buttonLabel}
             contentStyle={styles.buttonContent}
           >
-            Book with Voice
+            {isSmallScreen ? 'Voice' : 'Book with Voice'}
           </Button>
           
           {/* Regular booking button */}
           <Button
             mode="contained"
             onPress={() => {}}
-            style={[styles.bookButton, styles.bookNowButton, styles.marginTop]}
+            style={[styles.bookButton, styles.marginTop]}
             labelStyle={styles.buttonLabel}
             contentStyle={styles.buttonContent}
           >
@@ -79,12 +82,12 @@ export default function Index() {
           <Button
             mode="contained"
             onPress={() => {}}
-            style={[styles.bookButton, styles.manageButton, styles.marginTop]}
+            style={[styles.bookButton, styles.marginTop, styles.manageButton]}
             labelStyle={styles.buttonLabel}
             contentStyle={styles.buttonContent}
           >
             <Link href="/screens/booking-management" style={styles.buttonText}>
-              Manage My Appointments
+              {isSmallScreen ? 'Manage' : 'Manage Booking'}
             </Link>
           </Button>
         </View>
@@ -189,17 +192,15 @@ const styles = StyleSheet.create({
   bookButton: {
     paddingHorizontal: 32,
     borderRadius: 25,
+    backgroundColor: '#6A1B9A', // Medium purple
     width: '80%',
     maxWidth: 300,
   },
   voiceButton: {
-    backgroundColor: '#4A148C', // Deep purple
-  },
-  bookNowButton: {
-    backgroundColor: '#6A1B9A', // Medium purple
+    backgroundColor: '#9C27B0',
   },
   manageButton: {
-    backgroundColor: '#8E24AA', // Lighter purple
+    backgroundColor: '#4A148C', // Deep purple
   },
   marginTop: {
     marginTop: 16,
