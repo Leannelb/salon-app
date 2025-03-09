@@ -40,17 +40,16 @@ export default function BookingComplete() {
       >
         Book Another Appointment
       </Button>
-      
-      {/* <Button
+      <Button
         mode="outlined"
         onPress={() => {
           // In a real app, this would navigate to a bookings management screen
-          router.push('/(tabs)/bookings');
+          router.push('/screens/booking-management');
         }}
         style={styles.button}
       >
         View My Bookings
-      </Button> */}
+      </Button>
     </View>
   );
 }

@@ -31,7 +31,7 @@ const stylists: Stylist[] = [
     id: '1',
     name: 'John',
     specialties: ['1', '3'],
-    branches: ['downtown', 'uptown'],
+    branches: ['southside', 'northside'],
     imageUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
     experience: '6 years'
   },
@@ -39,7 +39,7 @@ const stylists: Stylist[] = [
     id: '2',
     name: 'Sarah',
     specialties: ['1', '2', '3'],
-    branches: ['downtown', 'uptown'],
+    branches: ['southside', 'northside'],
     imageUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
     experience: '8 years'
   },
@@ -55,7 +55,7 @@ const stylists: Stylist[] = [
     id: '4',
     name: 'Jessica',
     specialties: ['2', '3'],
-    branches: ['uptown'],
+    branches: ['northside'],
     imageUrl: 'https://randomuser.me/api/portraits/women/65.jpg',
     experience: '7 years'
   }

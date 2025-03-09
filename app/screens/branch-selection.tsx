@@ -19,41 +19,23 @@ type Branch = {
 // Mock branches data
 const branches: Branch[] = [
   {
-    id: 'downtown',
-    name: 'Downtown Salon',
-    address: '123 Main Street, Downtown',
+    id: 'southside',
+    name: 'Southside Salon',
+    address: '18 South Anne Street, Dublin',
     imageUrl: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?w=500',
-    phone: '(555) 123-4567',
+    phone: '(01) 847-3492',
     distance: '1.2 miles',
     features: ['Parking Available', 'Wheelchair Accessible']
   },
   {
-    id: 'uptown',
-    name: 'Uptown Studio',
-    address: '456 Park Avenue, Uptown',
+    id: 'northside',
+    name: 'Northside Studio',
+    address: '87 Cromcastle Road, Northside',
     imageUrl: 'https://images.unsplash.com/photo-1470259078422-826894b933aa?w=500',
-    phone: '(555) 987-6543',
+    phone: '(01) 824-6578',
     distance: '3.5 miles',
     features: ['Wi-Fi', 'Coffee Bar']
   },
-  // {
-  //   id: 'westside',
-  //   name: 'Westside Spa & Salon',
-  //   address: '789 Ocean Boulevard, Westside',
-  //   imageUrl: 'https://images.unsplash.com/photo-1500840216050-6ffa99d75160?w=500',
-  //   phone: '(555) 456-7890',
-  //   distance: '5.8 miles',
-  //   features: ['Full Spa Services', 'Valet Parking']
-  // },
-  // {
-  //   id: 'eastend',
-  //   name: 'East End Beauty Bar',
-  //   address: '321 Harbor Drive, East End',
-  //   imageUrl: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=500',
-  //   phone: '(555) 321-0987',
-  //   distance: '4.2 miles',
-  //   features: ['Late Hours', 'Kids Area']
-  // }
 ];
 
 export default function BranchSelection() {

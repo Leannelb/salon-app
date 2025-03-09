@@ -1,22 +1,16 @@
-export interface CommandResult {
-    intent: string | null;
-    service: string | null;
-    stylist: string | null;
-    date: Date | null;
-    time: string | null;
-}
+export type CommandResult = {
+    intent?: string;
+    service?: string;
+    stylist?: string;
+    date?: Date;
+    time?: string;
+    branch?: string;
+};
 
 export function parseVoiceCommand(text: string): CommandResult {
     const command = text.toLowerCase();
-
-    const result: CommandResult = {
-        intent: null,
-        service: null,
-        stylist: null,
-        date: null,
-        time: null,
-    };
-
+    const result: CommandResult = {};
+    
     // Detect booking intent
     if (command.includes('book') || command.includes('appointment')) {
         result.intent = 'booking';
@@ -31,6 +25,12 @@ export function parseVoiceCommand(text: string): CommandResult {
     if (command.includes('john')) result.stylist = '1';
     if (command.includes('sarah')) result.stylist = '2';
     if (command.includes('michael')) result.stylist = '3';
+
+    // Detect branch
+    if (command.includes('southside')) result.branch = 'southside';
+    if (command.includes('northside')) result.branch = 'northside';
+    if (command.includes('westside')) result.branch = 'westside';
+    if (command.includes('east end')) result.branch = 'eastend';
 
     // Basic date detection
     if (command.includes('today')) {
@@ -52,3 +52,5 @@ export function parseVoiceCommand(text: string): CommandResult {
 
     return result;
 }
+
+export default parseVoiceCommand;
