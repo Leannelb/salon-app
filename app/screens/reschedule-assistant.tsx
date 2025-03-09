@@ -1,7 +1,7 @@
 // screens/reschedule-assistant.tsx
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, ScrollView, Alert } from 'react-native';
-import { Text, Card, Button, ActivityIndicator, Chip, Divider } from 'react-native-paper';
+import { StyleSheet, View, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { Text, Card, Button, ActivityIndicator, Chip, Divider, Switch, IconButton } from 'react-native-paper';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as Speech from 'expo-speech';
 
@@ -114,52 +114,60 @@ export default function RescheduleAssistant() {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   
-  // Initialize with voice feedback
+  // Voice assistant options
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  
   useEffect(() => {
     // Find the requested booking
     const foundBooking = mockBookings.find(b => b.id === bookingId);
     setBooking(foundBooking || null);
     
     if (foundBooking) {
-      // Welcome message
-      Speech.speak(
-        `I'll help you reschedule your ${foundBooking.serviceName} appointment. One moment while I find available times.`,
-        {
-          rate: 0.9,
-          pitch: 1.0,
-          onDone: () => {
-            // Generate alternatives with a slight delay to simulate loading
-            setTimeout(() => {
-              const slots = generateAlternatives(foundBooking);
-              setAlternatives(slots);
-              setLoading(false);
-              
-              // Speak about found alternatives
-              if (slots.length > 0) {
-                Speech.speak(
-                  `I found ${slots.length} alternative times for you. Please select a new time.`,
-                  { rate: 0.9, pitch: 1.0 }
-                );
-              } else {
-                Speech.speak(
-                  "I couldn't find any available times. Please try again later.",
-                  { rate: 0.9, pitch: 1.0 }
-                );
-              }
-            }, 1500);
-          }
-        }
-      );
+      // Generate alternatives with a slight delay to simulate loading
+      setTimeout(() => {
+        const slots = generateAlternatives(foundBooking);
+        setAlternatives(slots);
+        setLoading(false);
+      }, 1500);
     } else {
       setLoading(false);
-      Speech.speak("I couldn't find that appointment. Please try again.");
     }
   }, [bookingId]);
+  
+  // Handle toggling voice assistant
+  const toggleVoiceAssistant = () => {
+    const newState = !voiceEnabled;
+    setVoiceEnabled(newState);
+    
+    if (newState && booking) {
+      // Speak the welcome message when enabling
+      speakWithAssistant(
+        `I'll help you reschedule your ${booking.serviceName} appointment. I've found ${alternatives.length} available times for you. Please select a new time.`
+      );
+    } else {
+      // Stop speaking if turning off
+      Speech.stop();
+    }
+  };
+  
+  // Speak using the assistant (only if enabled)
+  const speakWithAssistant = (message: string) => {
+    if (voiceEnabled) {
+      Speech.speak(message, {
+        rate: 0.9,
+        pitch: 1.0,
+        voice: 'com.apple.voice.enhanced.en-US.Samantha' // Try to use enhanced voice if available
+      });
+    }
+  };
   
   // Handle slot selection
   const handleSelectSlot = (slot: TimeSlot) => {
     setSelectedSlot(slot);
-    Speech.speak(`Selected ${formatDate(slot.date)} at ${slot.time}`);
+    
+    if (voiceEnabled) {
+      speakWithAssistant(`Selected ${formatDate(slot.date)} at ${slot.time}`);
+    }
   };
   
   // Handle confirmation
@@ -168,27 +176,23 @@ export default function RescheduleAssistant() {
     
     setProcessing(true);
     
-    // Speak confirmation
-    Speech.speak(
-      `Rescheduling your ${booking.serviceName} appointment to ${formatDate(selectedSlot.date)} at ${selectedSlot.time}.`,
-      {
-        rate: 0.9,
-        pitch: 1.0,
-        onDone: () => {
-          // Simulate API call
-          setTimeout(() => {
-            setProcessing(false);
-            
-            // Show success alert
-            Alert.alert(
-              "Appointment Rescheduled",
-              "Your appointment has been successfully rescheduled.",
-              [{ text: "OK", onPress: () => router.replace('/screens/booking-management') }]
-            );
-          }, 1500);
-        }
-      }
-    );
+    if (voiceEnabled) {
+      speakWithAssistant(
+        `Rescheduling your ${booking.serviceName} appointment to ${formatDate(selectedSlot.date)} at ${selectedSlot.time}.`
+      );
+    }
+    
+    // Simulate API call
+    setTimeout(() => {
+      setProcessing(false);
+      
+      // Show success alert
+      Alert.alert(
+        "Appointment Rescheduled",
+        "Your appointment has been successfully rescheduled.",
+        [{ text: "OK", onPress: () => router.replace('/screens/booking-management') }]
+      );
+    }, 1500);
   };
   
   // Format date for display
@@ -222,6 +226,26 @@ export default function RescheduleAssistant() {
       <Text variant="headlineMedium" style={styles.heading}>
         Intelligent Rescheduling
       </Text>
+      
+      {/* Voice Assistant Toggle */}
+      <View style={styles.voiceAssistantContainer}>
+        <Text variant="bodyMedium">Voice Assistant</Text>
+        <Switch
+          value={voiceEnabled}
+          onValueChange={toggleVoiceAssistant}
+          color="#6A1B9A"
+        />
+        {voiceEnabled && (
+          <IconButton
+            icon="volume-high"
+            size={24}
+            onPress={() => speakWithAssistant(
+              `I'll help you reschedule your ${booking.serviceName} appointment. I've found ${alternatives.length} available times for you.`
+            )}
+            style={styles.speakButton}
+          />
+        )}
+      </View>
       
       <Card style={styles.bookingCard}>
         <Card.Content>
@@ -344,6 +368,18 @@ const styles = StyleSheet.create({
   heading: {
     marginBottom: 16,
     textAlign: 'center',
+  },
+  voiceAssistantContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginBottom: 16,
+    backgroundColor: 'white',
+    padding: 8,
+    borderRadius: 8,
+  },
+  speakButton: {
+    marginLeft: 8,
   },
   bookingCard: {
     marginBottom: 20,

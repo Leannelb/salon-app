@@ -18,6 +18,7 @@ type AppRoute =
   | '/' 
   | '/service-selection'
   | '/screens/branch-selection'
+  | '/screens/booking-screen'
   | '/screens/stylist-selection'
   | '/screens/date-time-selection'
   | '/screens/booking-management'
@@ -67,6 +68,7 @@ function getPageTitle(pathname: string): string {
   if (lastSegment === 'service-selection') return 'Select Service';
   if (lastSegment === 'stylist-selection') return 'Select Stylist';
   if (lastSegment === 'branch-selection') return 'Select Branch';
+  if (lastSegment === 'booking-screen') return 'Create an Appointment';
   if (lastSegment === 'date-time-selection') return 'Select Date & Time';
   if (lastSegment === 'booking-confirmation') return 'Confirm Booking';
   if (lastSegment === 'booking-complete') return 'Appointment Confirmation';
@@ -245,6 +247,13 @@ export default function RootLayout() {
           name="screens/date-time-selection" 
           options={{ 
             title: "Select Date & Time",
+            header: (props) => <CustomHeader {...props} />
+          }} 
+        />
+        <Stack.Screen 
+          name="screens/booking-screen" 
+          options={{ 
+            title: "Create an Appointment",
             header: (props) => <CustomHeader {...props} />
           }} 
         />
