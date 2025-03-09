@@ -1,7 +1,7 @@
 // screens/booking-confirmation.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, Alert } from 'react-native';
-import { Text, Card, Button, TextInput, Title, Divider } from 'react-native-paper';
+import { Text, Card, Button, TextInput, Title, Divider, HelperText } from 'react-native-paper';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { CommandResult } from '../utils/voice-command-parser';
 
@@ -38,6 +38,15 @@ export default function BookingConfirmation() {
   const [cardCvc, setCardCvc] = useState<string>('');
   const [processing, setProcessing] = useState<boolean>(false);
   
+  // Validation states
+  const [nameError, setNameError] = useState<string>('');
+  const [emailError, setEmailError] = useState<string>('');
+  const [phoneError, setPhoneError] = useState<string>('');
+  const [cardNumberError, setCardNumberError] = useState<string>('');
+  const [cardExpiryError, setCardExpiryError] = useState<string>('');
+  const [cardCvcError, setCardCvcError] = useState<string>('');
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  
   // Find service and stylist details
   const service = services.find(s => s.id === serviceId);
   const stylist = stylists.find(s => s.id === stylistId);
@@ -52,10 +61,156 @@ export default function BookingConfirmation() {
     });
   };
   
+  // Format credit card number with spaces every 4 digits
+  const formatCardNumber = (text: string) => {
+    // Remove all non-digits
+    const digitsOnly = text.replace(/\D/g, '');
+    
+    // Add spaces after every 4 digits
+    const formatted = digitsOnly.replace(/(\d{4})(?=\d)/g, '$1 ');
+    
+    return formatted;
+  };
+  
+  // Handle card number change
+  const handleCardNumberChange = (text: string) => {
+    const formatted = formatCardNumber(text);
+    setCardNumber(formatted);
+    
+    // Validate card number
+    if (formatted.replace(/\s/g, '').length < 16) {
+      setCardNumberError('Card number must be 16 digits');
+    } else {
+      setCardNumberError('');
+    }
+  };
+  
+  // Format expiry date as MM/YY
+  const formatExpiryDate = (text: string) => {
+    // Remove all non-digits
+    const digitsOnly = text.replace(/\D/g, '');
+    
+    if (digitsOnly.length > 2) {
+      return digitsOnly.substring(0, 2) + '/' + digitsOnly.substring(2, 4);
+    }
+    
+    return digitsOnly;
+  };
+  
+  // Handle expiry date change
+  const handleExpiryChange = (text: string) => {
+    // Remove any existing slash first
+    const textWithoutSlash = text.replace('/', '');
+    
+    const formatted = formatExpiryDate(textWithoutSlash);
+    setCardExpiry(formatted);
+    
+    // Validate expiry date
+    validateExpiryDate(formatted);
+  };
+  
+  // Validate expiry date
+  const validateExpiryDate = (expiry: string) => {
+    if (!expiry || expiry.length < 5) {
+      setCardExpiryError('Invalid expiry date');
+      return;
+    }
+    
+    const [monthStr, yearStr] = expiry.split('/');
+    const month = parseInt(monthStr, 10);
+    const year = parseInt('20' + yearStr, 10); // Assuming 20xx
+    
+    if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
+      setCardExpiryError('Invalid month');
+      return;
+    }
+    
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // JS months are 0-indexed
+    
+    if (year < currentYear || (year === currentYear && month < currentMonth)) {
+      setCardExpiryError('Card has expired');
+    } else {
+      setCardExpiryError('');
+    }
+  };
+  
+  // Handle CVC change
+  const handleCvcChange = (text: string) => {
+    // Only allow digits
+    const digitsOnly = text.replace(/\D/g, '');
+    setCardCvc(digitsOnly);
+    
+    if (digitsOnly.length < 3) {
+      setCardCvcError('CVC must be 3 digits');
+    } else {
+      setCardCvcError('');
+    }
+  };
+  
+  // Handle name change
+  const handleNameChange = (text: string) => {
+    setName(text);
+    
+    if (!text.trim()) {
+      setNameError('Name is required');
+    } else {
+      setNameError('');
+    }
+  };
+  
+  // Handle email change
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!text.trim()) {
+      setEmailError('Email is required');
+    } else if (!emailRegex.test(text)) {
+      setEmailError('Please enter a valid email');
+    } else {
+      setEmailError('');
+    }
+  };
+  
+  // Handle phone change
+  const handlePhoneChange = (text: string) => {
+    setPhone(text);
+    
+    if (!text.trim()) {
+      setPhoneError('Phone number is required');
+    } else if (!/^\d{10,}$/.test(text.replace(/\D/g, ''))) {
+      setPhoneError('Please enter a valid phone number');
+    } else {
+      setPhoneError('');
+    }
+  };
+  
+  // Check if form is valid
+  useEffect(() => {
+    const isValid = 
+      !nameError && name.trim() !== '' &&
+      !emailError && email.trim() !== '' &&
+      !phoneError && phone.trim() !== '' &&
+      !cardNumberError && cardNumber.replace(/\s/g, '').length === 16 &&
+      !cardExpiryError && cardExpiry.length === 5 &&
+      !cardCvcError && cardCvc.length === 3;
+    
+    setIsFormValid(isValid);
+  }, [
+    name, nameError,
+    email, emailError,
+    phone, phoneError,
+    cardNumber, cardNumberError,
+    cardExpiry, cardExpiryError,
+    cardCvc, cardCvcError
+  ]);
+  
   // Handle confirmation
   const handleConfirm = () => {
-    if (!name || !email || !phone || !cardNumber || !cardExpiry || !cardCvc) {
-      Alert.alert('Missing Information', 'Please fill in all fields');
+    if (!isFormValid) {
+      Alert.alert('Validation Error', 'Please correct the errors in the form');
       return;
     }
     
@@ -93,28 +248,34 @@ export default function BookingConfirmation() {
           <TextInput
             label="Full Name"
             value={name}
-            onChangeText={setName}
+            onChangeText={handleNameChange}
             mode="outlined"
             style={styles.input}
+            error={!!nameError}
           />
+          {nameError ? <HelperText type="error">{nameError}</HelperText> : null}
           
           <TextInput
             label="Email"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={handleEmailChange}
             mode="outlined"
             keyboardType="email-address"
             style={styles.input}
+            error={!!emailError}
           />
+          {emailError ? <HelperText type="error">{emailError}</HelperText> : null}
           
           <TextInput
             label="Phone"
             value={phone}
-            onChangeText={setPhone}
+            onChangeText={handlePhoneChange}
             mode="outlined"
             keyboardType="phone-pad"
             style={styles.input}
+            error={!!phoneError}
           />
+          {phoneError ? <HelperText type="error">{phoneError}</HelperText> : null}
         </Card.Content>
       </Card>
       
@@ -125,33 +286,44 @@ export default function BookingConfirmation() {
           <TextInput
             label="Card Number"
             value={cardNumber}
-            onChangeText={setCardNumber}
+            onChangeText={handleCardNumberChange}
             mode="outlined"
             keyboardType="number-pad"
             style={styles.input}
-            maxLength={16}
+            maxLength={19} // 16 digits + 3 spaces
+            error={!!cardNumberError}
           />
+          {cardNumberError ? <HelperText type="error">{cardNumberError}</HelperText> : null}
           
           <View style={styles.cardRowContainer}>
-            <TextInput
-              label="Expiry (MM/YY)"
-              value={cardExpiry}
-              onChangeText={setCardExpiry}
-              mode="outlined"
-              style={[styles.input, styles.cardRowInput]}
-              maxLength={5}
-            />
+            <View style={[styles.cardRowInput, {marginRight: 8}]}>
+              <TextInput
+                label="Expiry (MM/YY)"
+                value={cardExpiry}
+                onChangeText={handleExpiryChange}
+                mode="outlined"
+                keyboardType="number-pad"
+                style={styles.input}
+                maxLength={5} // MM/YY
+                error={!!cardExpiryError}
+              />
+              {cardExpiryError ? <HelperText type="error">{cardExpiryError}</HelperText> : null}
+            </View>
             
-            <TextInput
-              label="CVC"
-              value={cardCvc}
-              onChangeText={setCardCvc}
-              mode="outlined"
-              keyboardType="number-pad"
-              style={[styles.input, styles.cardRowInput]}
-              maxLength={3}
-              secureTextEntry
-            />
+            <View style={styles.cardRowInput}>
+              <TextInput
+                label="CVC"
+                value={cardCvc}
+                onChangeText={handleCvcChange}
+                mode="outlined"
+                keyboardType="number-pad"
+                style={styles.input}
+                maxLength={3}
+                secureTextEntry
+                error={!!cardCvcError}
+              />
+              {cardCvcError ? <HelperText type="error">{cardCvcError}</HelperText> : null}
+            </View>
           </View>
         </Card.Content>
       </Card>
@@ -160,7 +332,7 @@ export default function BookingConfirmation() {
         mode="contained"
         onPress={handleConfirm}
         loading={processing}
-        disabled={processing}
+        disabled={processing || !isFormValid}
         style={styles.confirmButton}
       >
         {processing ? 'Processing...' : 'Confirm Booking'}
@@ -197,7 +369,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   input: {
-    marginVertical: 8,
+    marginVertical: 4,
   },
   cardRowContainer: {
     flexDirection: 'row',
@@ -205,7 +377,6 @@ const styles = StyleSheet.create({
   },
   cardRowInput: {
     flex: 1,
-    marginHorizontal: 4,
   },
   confirmButton: {
     marginVertical: 24,
