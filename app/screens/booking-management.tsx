@@ -244,7 +244,7 @@ export default function BookingManagement() {
           isActive={activeFilter === 'confirmed'}
           onPress={() => setActiveFilter('confirmed')}
         />
-        <FilterButton
+        {/* <FilterButton
           label="Completed"
           isActive={activeFilter === 'completed'}
           onPress={() => setActiveFilter('completed')}
@@ -253,7 +253,7 @@ export default function BookingManagement() {
           label="Cancelled"
           isActive={activeFilter === 'cancelled'}
           onPress={() => setActiveFilter('cancelled')}
-        />
+        /> */}
                 <FilterButton
           label="All"
           isActive={activeFilter === 'all'}

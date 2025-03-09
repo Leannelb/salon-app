@@ -16,15 +16,18 @@ An AI-powered voice agent for salon bookings that transforms the traditional boo
 - [Key Features](#-key-features)
 - [Installation](#-installation)
 - [Application Flow](#-application-flow)
+- [Screenshots](#-screenshots)
 - [Technical Implementation](#-technical-implementation)
 - [Challenge Response](#-challenge-response)
 - [Future Improvements](#-future-improvements)
+- [License](#-license)
+- [Contact](#-contact)
 
 ## 🚀 About
 
 This application reimagines the salon booking experience by implementing an AI-powered voice agent that handles the entire booking process through natural voice commands. Users can book appointments by simply speaking requests like "Book a haircut with Sarah tomorrow at 2pm," and the application intelligently processes these commands to schedule appointments.
 
-### The Challenge
+### 🎯 The Challenge
 
 Transform the way salon bookings are made using natural voice commands to:
 - Scan available slots in real-time
@@ -106,8 +109,87 @@ The application is structured with a tab-based navigation for primary screens an
 ### Voice Integration
 The voice recognition component is implemented in `app/components/voice-recognition.tsx` and processes commands using the natural language parser in `app/utils/voice-command-parser.tsx`.
 
-### Voice Configuration
-The application includes a custom voice configuration (`app/utils/female_voice.tsx`) to provide a more natural interaction experience.
+## 📸 Screenshots
+
+### Home Screen
+
+<p align="center">
+  <img src="./screenshots/home.png" alt="Home Screen" width="300" />
+  <br>
+  <em>The app's landing page with voice booking, manual booking, and appointment management options.</em>
+</p>
+
+### Voice Recognition
+
+<p align="center">
+  <img src="./screenshots/voice.png" alt="Voice Recognition" width="300" />
+  <br>
+  <em>Modal interface for voice commands allowing natural language booking.</em>
+</p>
+
+### Service Selection
+
+<p align="center">
+  <img src="./screenshots/service-selection.png" alt="Service Selection" width="300" />
+  <br>
+  <em>Browse and select from available salon services.</em>
+</p>
+
+### Branch Selection
+
+<p align="center">
+  <img src="./screenshots/branch-selection.png" alt="Branch Selection" width="300" />
+  <br>
+  <em>Choose from multiple salon locations with details about each.</em>
+</p>
+
+### Stylist Selection
+
+<p align="center">
+  <img src="./screenshots/stylist-selection.png" alt="Stylist Selection" width="300" />
+  <br>
+  <em>Select a stylist based on specialties and availability at your chosen branch.</em>
+</p>
+
+### Date & Time Selection
+
+<p align="center">
+  <img src="./screenshots/datetime-selection.png" alt="Date Time Selection" width="300" />
+  <br>
+  <em>Calendar interface to pick your preferred date and available time slots.</em>
+</p>
+
+### Booking Confirmation
+
+<p align="center">
+  <img src="./screenshots/booking-confirmed.png" alt="Booking Confirmation" width="300" />
+  <br>
+  <em>Confirmation screen with booking details and next steps.</em>
+</p>
+
+### Booking Management
+
+<p align="center">
+  <img src="./screenshots/booking-management.png" alt="Booking Management" width="300" />
+  <br>
+  <em>View, cancel, and manage your existing appointments.</em>
+</p>
+
+### Rescheduling Assistant
+
+<p align="center">
+  <img src="./screenshots/reschedule.png" alt="Rescheduling Assistant" width="300" />
+  <br>
+  <em>Intelligent suggestions for alternative appointment times when rescheduling.</em>
+</p>
+
+### Hamburger Meny
+
+<p align="center">
+  <img src="./screenshots/hamburger.png" alt="Hamburger Menu" width="300" />
+  <br>
+  <em>Hamburger menu for accessing pages of the application</em>
+</p>
 
 ## 🔧 Technical Implementation
 
@@ -133,7 +215,6 @@ The application includes a custom voice configuration (`app/utils/female_voice.t
 │   │   └── voice-recognition.tsx # Voice command interface
 │   ├── utils/                   # Helper functions
 │   │   ├── voice-command-parser.tsx # NLP for voice commands
-│   │   └── female_voice.tsx        # Voice configuration
 │   └── _layout.tsx              # Root navigation setup
 ├── assets/                      # Static resources
 │   ├── images/                  # Image files
@@ -308,15 +389,13 @@ function PaymentScreen() {
    - Staff performance metrics
    - Popular services and peak times
 
----
-
 ## 📄 License
 
 This project is created for demonstration purposes as part of a job interview challenge.
 
 ## 📞 Contact
 
-For any questions about this project, please reach out to me at your.leannelaceybyrne@outlook.com
+For any questions about this project, please reach out to me at leannelaceybyrne@outlook.com
 
 ---
 
