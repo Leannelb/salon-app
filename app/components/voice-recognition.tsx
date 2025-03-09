@@ -140,7 +140,9 @@ export default function VoiceRecognition({
           Speech.speak("What would you like to do?", { 
             rate: 0.9, 
             pitch: 1.0,
-            onDone: startListening
+            onDone: () => {
+              startListening();
+            }
           });
         } else {
           startListening();
