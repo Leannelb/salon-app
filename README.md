@@ -2,6 +2,9 @@
 
 An AI-powered voice agent for salon bookings that transforms the traditional booking experience through natural language commands.
 
+The Luxe Salon application has been deployed to Netlify for ease of viewing:
+Please visit https://luxe-salon-application.netlify.app/ to view
+
 ![React Native](https://img.shields.io/badge/React%20Native-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
@@ -44,6 +47,10 @@ Transform the way salon bookings are made using natural voice commands to:
 - **Intelligent Scheduling**: Find available time slots that match preferences
 - **Appointment Management**: View, cancel, or reschedule existing bookings
 - **Seamless Navigation**: Intuitive UI with hamburger menu and consistent header
+
+
+## Preview
+The Luxe Salon Application has been deployed to Netlify. Please visit https://luxe-salon-application.netlify.app/ to view the application
 
 ## 💻 Installation
 
