@@ -4,13 +4,13 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 /**
  * TabLayout is the main navigation component that sets up the bottom tab navigation
  * for the application using Expo Router's Tabs component.
- * 
+ *
  * @returns {JSX.Element} A Tabs navigator component with configured screens for:
  *   - Home (index)
  *   - Booking
  *   - Services (service-selection)
  *   - About
- * 
+ *
  * Each tab is configured with:
  *   - Custom icons using Ionicons
  *   - Active/inactive states
@@ -21,8 +21,8 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#6A1B9A', 
-        headerShown: false, 
+        tabBarActiveTintColor: '#6A1B9A',
+        headerShown: false,
       }}
     >
       <Tabs.Screen
@@ -57,7 +57,11 @@ export default function TabLayout() {
         options={{
           title: 'About',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'information-circle' : 'information-circle-outline'} color={color} size={24} />
+            <Ionicons
+              name={focused ? 'information-circle' : 'information-circle-outline'}
+              color={color}
+              size={24}
+            />
           ),
         }}
       />

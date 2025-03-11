@@ -1,4 +1,3 @@
-// screens/booking-confirmation.tsx
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, Alert } from 'react-native';
 import { Text, Card, Button, TextInput, Title, Divider, HelperText } from 'react-native-paper';
@@ -23,13 +22,13 @@ const stylists = [
 export default function BookingConfirmation() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  
+
   const serviceId = params.serviceId as string;
   const stylistId = params.stylistId as string;
   const date = params.date as string;
   const time = params.time as string;
-  const command = params.command ? JSON.parse(params.command as string) as CommandResult : null;
-  
+  const command = params.command ? (JSON.parse(params.command as string) as CommandResult) : null;
+
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
@@ -37,7 +36,7 @@ export default function BookingConfirmation() {
   const [cardExpiry, setCardExpiry] = useState<string>('');
   const [cardCvc, setCardCvc] = useState<string>('');
   const [processing, setProcessing] = useState<boolean>(false);
-  
+
   // Validation states
   const [nameError, setNameError] = useState<string>('');
   const [emailError, setEmailError] = useState<string>('');
@@ -46,37 +45,37 @@ export default function BookingConfirmation() {
   const [cardExpiryError, setCardExpiryError] = useState<string>('');
   const [cardCvcError, setCardCvcError] = useState<string>('');
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  
+
   // Find service and stylist details
-  const service = services.find(s => s.id === serviceId);
-  const stylist = stylists.find(s => s.id === stylistId);
-  
+  const service = services.find((s) => s.id === serviceId);
+  const stylist = stylists.find((s) => s.id === stylistId);
+
   // Format date for display
   const formatDisplayDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
     });
   };
-  
+
   // Format credit card number with spaces every 4 digits
   const formatCardNumber = (text: string) => {
     // Remove all non-digits
     const digitsOnly = text.replace(/\D/g, '');
-    
+
     // Add spaces after every 4 digits
     const formatted = digitsOnly.replace(/(\d{4})(?=\d)/g, '$1 ');
-    
+
     return formatted;
   };
-  
+
   // Handle card number change
   const handleCardNumberChange = (text: string) => {
     const formatted = formatCardNumber(text);
     setCardNumber(formatted);
-    
+
     // Validate card number
     if (formatted.replace(/\s/g, '').length < 16) {
       setCardNumberError('Card number must be 16 digits');
@@ -84,86 +83,86 @@ export default function BookingConfirmation() {
       setCardNumberError('');
     }
   };
-  
+
   // Format expiry date as MM/YY
   const formatExpiryDate = (text: string) => {
     // Remove all non-digits
     const digitsOnly = text.replace(/\D/g, '');
-    
+
     if (digitsOnly.length > 2) {
       return digitsOnly.substring(0, 2) + '/' + digitsOnly.substring(2, 4);
     }
-    
+
     return digitsOnly;
   };
-  
+
   // Handle expiry date change
   const handleExpiryChange = (text: string) => {
     // Remove any existing slash first
     const textWithoutSlash = text.replace('/', '');
-    
+
     const formatted = formatExpiryDate(textWithoutSlash);
     setCardExpiry(formatted);
-    
+
     // Validate expiry date
     validateExpiryDate(formatted);
   };
-  
+
   // Validate expiry date
   const validateExpiryDate = (expiry: string) => {
     if (!expiry || expiry.length < 5) {
       setCardExpiryError('Invalid expiry date');
       return;
     }
-    
+
     const [monthStr, yearStr] = expiry.split('/');
     const month = parseInt(monthStr, 10);
     const year = parseInt('20' + yearStr, 10); // Assuming 20xx
-    
+
     if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
       setCardExpiryError('Invalid month');
       return;
     }
-    
+
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth() + 1; // JS months are 0-indexed
-    
+
     if (year < currentYear || (year === currentYear && month < currentMonth)) {
       setCardExpiryError('Card has expired');
     } else {
       setCardExpiryError('');
     }
   };
-  
+
   // Handle CVC change
   const handleCvcChange = (text: string) => {
     // Only allow digits
     const digitsOnly = text.replace(/\D/g, '');
     setCardCvc(digitsOnly);
-    
+
     if (digitsOnly.length < 3) {
       setCardCvcError('CVC must be 3 digits');
     } else {
       setCardCvcError('');
     }
   };
-  
+
   // Handle name change
   const handleNameChange = (text: string) => {
     setName(text);
-    
+
     if (!text.trim()) {
       setNameError('Name is required');
     } else {
       setNameError('');
     }
   };
-  
+
   // Handle email change
   const handleEmailChange = (text: string) => {
     setEmail(text);
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!text.trim()) {
       setEmailError('Email is required');
@@ -173,11 +172,11 @@ export default function BookingConfirmation() {
       setEmailError('');
     }
   };
-  
+
   // Handle phone change
   const handlePhoneChange = (text: string) => {
     setPhone(text);
-    
+
     if (!text.trim()) {
       setPhoneError('Phone number is required');
     } else if (!/^\d{10,}$/.test(text.replace(/\D/g, ''))) {
@@ -186,49 +185,61 @@ export default function BookingConfirmation() {
       setPhoneError('');
     }
   };
-  
+
   // Check if form is valid
   useEffect(() => {
-    const isValid = 
-      !nameError && name.trim() !== '' &&
-      !emailError && email.trim() !== '' &&
-      !phoneError && phone.trim() !== '' &&
-      !cardNumberError && cardNumber.replace(/\s/g, '').length === 16 &&
-      !cardExpiryError && cardExpiry.length === 5 &&
-      !cardCvcError && cardCvc.length === 3;
-    
+    const isValid =
+      !nameError &&
+      name.trim() !== '' &&
+      !emailError &&
+      email.trim() !== '' &&
+      !phoneError &&
+      phone.trim() !== '' &&
+      !cardNumberError &&
+      cardNumber.replace(/\s/g, '').length === 16 &&
+      !cardExpiryError &&
+      cardExpiry.length === 5 &&
+      !cardCvcError &&
+      cardCvc.length === 3;
+
     setIsFormValid(isValid);
   }, [
-    name, nameError,
-    email, emailError,
-    phone, phoneError,
-    cardNumber, cardNumberError,
-    cardExpiry, cardExpiryError,
-    cardCvc, cardCvcError
+    name,
+    nameError,
+    email,
+    emailError,
+    phone,
+    phoneError,
+    cardNumber,
+    cardNumberError,
+    cardExpiry,
+    cardExpiryError,
+    cardCvc,
+    cardCvcError,
   ]);
-  
+
   // Handle confirmation
   const handleConfirm = () => {
     if (!isFormValid) {
       Alert.alert('Validation Error', 'Please correct the errors in the form');
       return;
     }
-    
+
     setProcessing(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setProcessing(false);
       router.push('/screens/booking-complete');
     }, 1500);
   };
-  
+
   return (
     <ScrollView style={styles.container}>
       <Text variant="headlineMedium" style={styles.heading}>
         Booking Summary
       </Text>
-      
+
       <Card style={styles.summaryCard}>
         <Card.Content>
           <Title>Appointment Details</Title>
@@ -240,11 +251,11 @@ export default function BookingConfirmation() {
           <Text style={styles.priceText}>Price: ${service?.price.toFixed(2)}</Text>
         </Card.Content>
       </Card>
-      
+
       <Card style={styles.formCard}>
         <Card.Content>
           <Title>Your Information</Title>
-          
+
           <TextInput
             label="Full Name"
             value={name}
@@ -254,7 +265,7 @@ export default function BookingConfirmation() {
             error={!!nameError}
           />
           {nameError ? <HelperText type="error">{nameError}</HelperText> : null}
-          
+
           <TextInput
             label="Email"
             value={email}
@@ -265,7 +276,7 @@ export default function BookingConfirmation() {
             error={!!emailError}
           />
           {emailError ? <HelperText type="error">{emailError}</HelperText> : null}
-          
+
           <TextInput
             label="Phone"
             value={phone}
@@ -278,11 +289,11 @@ export default function BookingConfirmation() {
           {phoneError ? <HelperText type="error">{phoneError}</HelperText> : null}
         </Card.Content>
       </Card>
-      
+
       <Card style={styles.formCard}>
         <Card.Content>
           <Title>Payment Details</Title>
-          
+
           <TextInput
             label="Card Number"
             value={cardNumber}
@@ -294,9 +305,9 @@ export default function BookingConfirmation() {
             error={!!cardNumberError}
           />
           {cardNumberError ? <HelperText type="error">{cardNumberError}</HelperText> : null}
-          
+
           <View style={styles.cardRowContainer}>
-            <View style={[styles.cardRowInput, {marginRight: 8}]}>
+            <View style={[styles.cardRowInput, { marginRight: 8 }]}>
               <TextInput
                 label="Expiry (MM/YY)"
                 value={cardExpiry}
@@ -309,7 +320,7 @@ export default function BookingConfirmation() {
               />
               {cardExpiryError ? <HelperText type="error">{cardExpiryError}</HelperText> : null}
             </View>
-            
+
             <View style={styles.cardRowInput}>
               <TextInput
                 label="CVC"
@@ -327,7 +338,7 @@ export default function BookingConfirmation() {
           </View>
         </Card.Content>
       </Card>
-      
+
       <Button
         mode="contained"
         onPress={handleConfirm}

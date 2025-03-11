@@ -25,7 +25,7 @@ const branches: Branch[] = [
     imageUrl: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?w=500',
     phone: '(01) 847-3492',
     distance: '1.2 miles',
-    features: ['Parking Available', 'Wheelchair Accessible']
+    features: ['Parking Available', 'Wheelchair Accessible'],
   },
   {
     id: 'northside',
@@ -34,7 +34,7 @@ const branches: Branch[] = [
     imageUrl: 'https://images.unsplash.com/photo-1470259078422-826894b933aa?w=500',
     phone: '(01) 824-6578',
     distance: '3.5 miles',
-    features: ['Wi-Fi', 'Coffee Bar']
+    features: ['Wi-Fi', 'Coffee Bar'],
   },
 ];
 
@@ -42,12 +42,12 @@ export default function BranchSelection() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const serviceId = params.serviceId as string;
-  const command = params.command ? JSON.parse(params.command as string) as CommandResult : null;
-  
+  const command = params.command ? (JSON.parse(params.command as string) as CommandResult) : null;
+
   // Check if branch was detected in voice command
   const detectedBranchId = command?.branch || null;
   const [selectedBranch, setSelectedBranch] = useState<string | null>(detectedBranchId);
-  
+
   const handleContinue = () => {
     if (selectedBranch) {
       // Navigate to stylist selection with both service and branch
@@ -56,33 +56,26 @@ export default function BranchSelection() {
         params: {
           serviceId,
           branchId: selectedBranch,
-          command: JSON.stringify(command)
-        }
+          command: JSON.stringify(command),
+        },
       });
     }
   };
 
   const renderBranchItem = ({ item }: { item: Branch }) => (
     <Card
-      style={[
-        styles.branchCard,
-        selectedBranch === item.id ? styles.selectedCard : null
-      ]}
+      style={[styles.branchCard, selectedBranch === item.id ? styles.selectedCard : null]}
       onPress={() => setSelectedBranch(item.id)}
     >
-      {item.imageUrl && (
-        <Card.Cover source={{ uri: item.imageUrl }} style={styles.cardImage} />
-      )}
+      {item.imageUrl && <Card.Cover source={{ uri: item.imageUrl }} style={styles.cardImage} />}
       <Card.Content>
         <Title>{item.name}</Title>
         <Paragraph style={styles.address}>{item.address}</Paragraph>
         <Text style={styles.phone}>{item.phone}</Text>
-        {item.distance && (
-          <Text style={styles.distance}>{item.distance} away</Text>
-        )}
-        
+        {item.distance && <Text style={styles.distance}>{item.distance} away</Text>}
+
         <View style={styles.featuresContainer}>
-          {item.features?.map(feature => (
+          {item.features?.map((feature) => (
             <Chip key={feature} style={styles.featureChip}>
               {feature}
             </Chip>
@@ -97,20 +90,20 @@ export default function BranchSelection() {
       <Text variant="headlineMedium" style={styles.heading}>
         Select Location
       </Text>
-      
+
       {command?.branch && (
         <Text style={styles.voiceDetected}>
-          Voice command detected: {branches.find(b => b.id === command.branch)?.name}
+          Voice command detected: {branches.find((b) => b.id === command.branch)?.name}
         </Text>
       )}
-      
+
       <FlatList
         data={branches}
         renderItem={renderBranchItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.branchesList}
       />
-      
+
       <Button
         mode="contained"
         onPress={handleContinue}

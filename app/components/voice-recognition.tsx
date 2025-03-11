@@ -19,20 +19,20 @@ type VoiceRecognitionProps = {
   voiceFeedback?: boolean;
 };
 
-export default function VoiceRecognition({ 
-  onResult, 
+export default function VoiceRecognition({
+  onResult,
   onNavigate,
-  voiceFeedback = false
+  voiceFeedback = false,
 }: VoiceRecognitionProps) {
   const [isListening, setIsListening] = useState(false);
   const [text, setText] = useState('');
   const [webSpeechRecognition, setWebSpeechRecognition] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  
+
   // Animation for the pulsing effect
   const pulseAnim = useRef(new Animated.Value(1)).current;
-  
+
   // Start pulsing animation when listening
   useEffect(() => {
     if (isListening) {
@@ -47,8 +47,8 @@ export default function VoiceRecognition({
             toValue: 1,
             duration: 1000,
             useNativeDriver: true,
-          })
-        ])
+          }),
+        ]),
       ).start();
     } else {
       pulseAnim.setValue(1);
@@ -73,7 +73,7 @@ export default function VoiceRecognition({
         recognition.onresult = (event: any) => {
           const result = event.results[0][0].transcript;
           setText(result);
-          
+
           // Only call onResult when recognition is final
           if (event.results[0].isFinal) {
             if (onResult) {
@@ -114,7 +114,7 @@ export default function VoiceRecognition({
 
       Voice.onSpeechResults = onSpeechResults;
       Voice.onSpeechError = onSpeechError;
-      
+
       return () => {
         Voice.destroy().then(Voice.removeAllListeners);
       };
@@ -127,7 +127,7 @@ export default function VoiceRecognition({
       setText('');
       setErrorMessage(null);
       setShowConfirmation(false);
-      
+
       if (isListening) {
         if (Platform.OS === 'web') {
           webSpeechRecognition?.stop();
@@ -137,12 +137,12 @@ export default function VoiceRecognition({
         setIsListening(false);
       } else {
         if (voiceFeedback) {
-          Speech.speak("What would you like to do?", { 
-            rate: 0.9, 
+          Speech.speak('What would you like to do?', {
+            rate: 0.9,
             pitch: 1.0,
             onDone: () => {
               startListening();
-            }
+            },
           });
         } else {
           startListening();
@@ -153,7 +153,7 @@ export default function VoiceRecognition({
       setErrorMessage(`Error: ${e instanceof Error ? e.message : 'Unknown error'}`);
     }
   };
-  
+
   const startListening = async () => {
     try {
       if (Platform.OS === 'web') {
@@ -185,33 +185,26 @@ export default function VoiceRecognition({
       {text ? (
         <Text style={styles.transcript}>{text}</Text>
       ) : (
-        <Text style={styles.instructionText}>
-          {isListening ? 'Listening...' : 'Tap to speak'}
-        </Text>
+        <Text style={styles.instructionText}>{isListening ? 'Listening...' : 'Tap to speak'}</Text>
       )}
-      
+
       <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
         <TouchableOpacity
-          style={[
-            styles.micButton,
-            isListening ? styles.micButtonActive : null
-          ]}
+          style={[styles.micButton, isListening ? styles.micButtonActive : null]}
           onPress={toggleListening}
           activeOpacity={0.7}
         >
-          <IconButton 
-            icon={isListening ? "microphone-off" : "microphone"} 
+          <IconButton
+            icon={isListening ? 'microphone-off' : 'microphone'}
             size={40}
             iconColor="#fff"
             style={styles.micIcon}
           />
         </TouchableOpacity>
       </Animated.View>
-      
-      {errorMessage && (
-        <Text style={styles.errorText}>{errorMessage}</Text>
-      )}
-      
+
+      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+
       {/* Confirmation Modal */}
       <Portal>
         <Modal
@@ -222,10 +215,10 @@ export default function VoiceRecognition({
           <Text style={styles.modalTitle}>I heard:</Text>
           <Text style={styles.modalText}>{text}</Text>
           <Text style={styles.modalQuestion}>Is this correct?</Text>
-          
+
           <View style={styles.modalButtons}>
-            <Button 
-              mode="outlined" 
+            <Button
+              mode="outlined"
               onPress={() => {
                 setShowConfirmation(false);
                 toggleListening();
@@ -234,12 +227,8 @@ export default function VoiceRecognition({
             >
               Try Again
             </Button>
-            
-            <Button 
-              mode="contained"
-              onPress={handleConfirm}
-              style={styles.modalButton}
-            >
+
+            <Button mode="contained" onPress={handleConfirm} style={styles.modalButton}>
               Yes, Continue
             </Button>
           </View>

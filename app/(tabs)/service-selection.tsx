@@ -20,30 +20,28 @@ const services: Service[] = [
     name: 'Haircut',
     duration: 30,
     price: 35,
-    description: 'Professional haircut tailored to your style preferences'
+    description: 'Professional haircut tailored to your style preferences',
   },
   {
     id: '2',
     name: 'Coloring',
     duration: 90,
     price: 80,
-    description: 'Full color treatment including roots and styling'
+    description: 'Full color treatment including roots and styling',
   },
   {
     id: '3',
     name: 'Styling',
     duration: 45,
     price: 50,
-    description: 'Expert styling for special occasions or everyday looks'
+    description: 'Expert styling for special occasions or everyday looks',
   },
 ];
 
 export default function ServiceSelection() {
   const params = useLocalSearchParams();
-  const command = params?.command ? JSON.parse(params.command as string) as CommandResult : null;
-  const [selectedService, setSelectedService] = useState<string | null>(
-    command?.service || null
-  );
+  const command = params?.command ? (JSON.parse(params.command as string) as CommandResult) : null;
+  const [selectedService, setSelectedService] = useState<string | null>(command?.service || null);
 
   const handleContinue = () => {
     if (selectedService) {
@@ -51,18 +49,15 @@ export default function ServiceSelection() {
         pathname: '/screens/branch-selection', // Changed from stylist-selection
         params: {
           serviceId: selectedService,
-          command: JSON.stringify(command)
-        }
+          command: JSON.stringify(command),
+        },
       });
     }
   };
 
   const renderServiceItem = ({ item }: { item: Service }) => (
     <Card
-      style={[
-        styles.serviceCard,
-        selectedService === item.id ? styles.selectedCard : null
-      ]}
+      style={[styles.serviceCard, selectedService === item.id ? styles.selectedCard : null]}
       onPress={() => setSelectedService(item.id)}
     >
       <Card.Content>
@@ -84,14 +79,14 @@ export default function ServiceSelection() {
 
       {command?.service && (
         <Text style={styles.voiceDetected}>
-          Voice command detected: {services.find(s => s.id === command.service)?.name}
+          Voice command detected: {services.find((s) => s.id === command.service)?.name}
         </Text>
       )}
 
       <FlatList
         data={services}
         renderItem={renderServiceItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.servicesList}
       />
 

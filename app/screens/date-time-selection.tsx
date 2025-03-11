@@ -22,98 +22,92 @@ type DateData = {
 };
 
 // Mock data generation for available slots
-const generateTimeSlots = (date: string, stylistId: string, serviceId: string): TimeSlot[] => {
+const generateTimeSlots = (date: string): TimeSlot[] => {
   // In a real app, this would call an API to get available slots
   const slots: TimeSlot[] = [];
   // Business hours: 9am - 5pm
   const startHour = 9;
   const endHour = 17;
-  
+
   // Random availability - in real app would be from backend
   for (let hour = startHour; hour < endHour; hour++) {
     for (let minute = 0; minute < 60; minute += 30) {
       // Format time as HH:MM
       const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-      
+
       // Random availability (70% chance of being available)
       const isAvailable = Math.random() < 0.7;
-      
+
       slots.push({
         id: `${date}-${timeString}`,
         time: timeString,
-        available: isAvailable
+        available: isAvailable,
       });
     }
   }
-  
+
   return slots;
 };
 
 export default function DateTimeSelection() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  
+
   const serviceId = params.serviceId as string;
   const stylistId = params.stylistId as string;
-  const command = params.command ? JSON.parse(params.command as string) as CommandResult : null;
-  
+  const command = params.command ? (JSON.parse(params.command as string) as CommandResult) : null;
+
   // If date was mentioned in voice command, parse it
-  const initialDate = command?.date 
-    ? new Date(command.date) 
-    : new Date();
-  
+  const initialDate = command?.date ? new Date(command.date) : new Date();
+
   const [selectedDate, setSelectedDate] = useState<string>(
-    initialDate.toISOString().split('T')[0] // Format as YYYY-MM-DD
+    initialDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
   );
-  
-  const [selectedTime, setSelectedTime] = useState<string | null>(
-    command?.time || null
-  );
-  
+
+  const [selectedTime, setSelectedTime] = useState<string | null>(command?.time || null);
+
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  
+
   // Set up min date (today) and max date (3 months from now)
   const today = new Date();
   const todayStr = today.toISOString().split('T')[0];
-  
+
   const maxDate = new Date();
   maxDate.setMonth(maxDate.getMonth() + 3);
   const maxDateStr = maxDate.toISOString().split('T')[0];
-  
+
   // Load time slots when date changes
   useEffect(() => {
     setLoading(true);
     setSelectedTime(null);
-    
+
     // Simulate API call delay
     setTimeout(() => {
       const slots = generateTimeSlots(selectedDate, stylistId, serviceId);
       setTimeSlots(slots);
       setLoading(false);
-      
+
       // If time was in voice command, try to select it
       if (command?.time) {
-        const matchingSlot = slots.find(slot => 
-          slot.time === command.time && slot.available
-        );
+        const matchingSlot = slots.find((slot) => slot.time === command.time && slot.available);
         if (matchingSlot) {
           setSelectedTime(matchingSlot.time);
         }
       }
     }, 800);
   }, [selectedDate]);
-  
+
   // Handle date selection
   const handleDateSelect = (date: DateData) => {
     setSelectedDate(date.dateString);
   };
-  
+
   // Handle time selection
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
   };
-  
+
   // Handle continue button
   const handleContinue = () => {
     if (selectedDate && selectedTime) {
@@ -124,47 +118,43 @@ export default function DateTimeSelection() {
           stylistId,
           date: selectedDate,
           time: selectedTime,
-          command: command ? JSON.stringify(command) : undefined
-        }
+          command: command ? JSON.stringify(command) : undefined,
+        },
       });
     }
   };
-  
+
   // Prepare calendar marked dates
   const markedDates: any = {
-    [selectedDate]: { selected: true, selectedColor: '#2196F3' }
+    [selectedDate]: { selected: true, selectedColor: '#2196F3' },
   };
-  
+
   // Format date for display
   const formatDisplayDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
     });
   };
-  
+
   return (
     <ScrollView style={styles.container}>
       <Text variant="headlineMedium" style={styles.heading}>
         Select Date & Time
       </Text>
-      
+
       {(command?.date || command?.time) && (
         <Card style={styles.voiceCard}>
           <Card.Content>
             <Text style={styles.voiceDetected}>Voice command detected:</Text>
-            {command?.date && (
-              <Text>Date: {new Date(command.date).toLocaleDateString()}</Text>
-            )}
-            {command?.time && (
-              <Text>Time: {command.time}</Text>
-            )}
+            {command?.date && <Text>Date: {new Date(command.date).toLocaleDateString()}</Text>}
+            {command?.time && <Text>Time: {command.time}</Text>}
           </Card.Content>
         </Card>
       )}
-      
+
       <Title style={styles.dateTitle}>Select a date</Title>
       <Calendar
         current={selectedDate}
@@ -178,18 +168,16 @@ export default function DateTimeSelection() {
           textDayFontSize: 16,
         }}
       />
-      
-      <Title style={styles.timeTitle}>
-        Available times for {formatDisplayDate(selectedDate)}
-      </Title>
-      
+
+      <Title style={styles.timeTitle}>Available times for {formatDisplayDate(selectedDate)}</Title>
+
       {loading ? (
         <ActivityIndicator size="large" style={styles.loader} />
       ) : timeSlots.length === 0 ? (
         <Text style={styles.noTimesMessage}>No available times for this date</Text>
       ) : (
         <View style={styles.timeSlotsContainer}>
-          {timeSlots.map(slot => (
+          {timeSlots.map((slot) => (
             <Chip
               key={slot.id}
               selected={selectedTime === slot.time}
@@ -198,7 +186,7 @@ export default function DateTimeSelection() {
               style={[
                 styles.timeChip,
                 selectedTime === slot.time ? styles.selectedTimeChip : null,
-                !slot.available ? styles.unavailableTimeChip : null
+                !slot.available ? styles.unavailableTimeChip : null,
               ]}
               textStyle={selectedTime === slot.time ? styles.selectedTimeText : null}
             >
@@ -207,7 +195,7 @@ export default function DateTimeSelection() {
           ))}
         </View>
       )}
-      
+
       <Button
         mode="contained"
         onPress={handleContinue}

@@ -1,6 +1,6 @@
 // index.tsx - Improved Home Page with Voice Recognition
-import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, ImageBackground, ScrollView } from "react-native";
+import React, { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, ImageBackground, ScrollView } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { Button, Card, IconButton, Modal, Portal } from 'react-native-paper';
 import VoiceRecognition from '../components/voice-recognition';
@@ -13,7 +13,7 @@ export default function Index() {
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
   const router = useRouter();
   const screenWidth = Dimensions.get('window').width;
-  const isSmallScreen = screenWidth < 380; 
+  const isSmallScreen = screenWidth < 380;
 
   // Handle voice command results
   const handleVoiceResult = (text: string) => {
@@ -27,17 +27,17 @@ export default function Index() {
     if (shouldNavigate && lastCommand) {
       // Close the modal first
       setVoiceModalVisible(false);
-      
+
       // Short delay to allow modal to close before navigation
       setTimeout(() => {
         router.push({
           pathname: '/service-selection',
-          params: { 
-            command: JSON.stringify(lastCommand) 
-          }
+          params: {
+            command: JSON.stringify(lastCommand),
+          },
         });
       }, 300);
-      
+
       setShouldNavigate(false);
     }
   }, [shouldNavigate, lastCommand]);
@@ -52,7 +52,7 @@ export default function Index() {
         <View style={styles.overlay}>
           <Text style={styles.title}>Luxe Salon</Text>
           <Text style={styles.subtitle}>Experience luxury and style</Text>
-          
+
           {/* Voice booking button */}
           <Button
             mode="contained"
@@ -64,7 +64,7 @@ export default function Index() {
           >
             {isSmallScreen ? 'Voice' : 'Book with Voice'}
           </Button>
-          
+
           {/* Regular booking button */}
           <Button
             mode="contained"
@@ -77,7 +77,7 @@ export default function Index() {
               Book Now
             </Link>
           </Button>
-          
+
           {/* Manage appointments button */}
           <Button
             mode="contained"
@@ -106,22 +106,20 @@ export default function Index() {
             onPress={() => setVoiceModalVisible(false)}
             style={styles.closeButton}
           />
-          
+
           <Text style={styles.modalTitle}>Voice Booking</Text>
           <Text style={styles.modalSubtitle}>
-            Say a command like "Book a haircut with Sarah tomorrow at 2pm"
+            Say a command like &quot;Book a haircut with Sarah tomorrow at 2pm&quot;
           </Text>
-          
+
           <VoiceRecognition onResult={handleVoiceResult} />
-          
+
           {lastCommand && (
             <Card style={styles.resultCard}>
               <Card.Content>
                 <Text style={styles.resultTitle}>I understood:</Text>
                 <ScrollView style={styles.resultScroll}>
-                  <Text style={styles.resultItem}>
-                    Intent: {lastCommand.intent || 'Unknown'}
-                  </Text>
+                  <Text style={styles.resultItem}>Intent: {lastCommand.intent || 'Unknown'}</Text>
                   <Text style={styles.resultItem}>
                     Service: {lastCommand.service || 'Not specified'}
                   </Text>
@@ -131,23 +129,23 @@ export default function Index() {
                   <Text style={styles.resultItem}>
                     Date: {lastCommand.date?.toDateString() || 'Not specified'}
                   </Text>
-                  <Text style={styles.resultItem}>
-                    Time: {lastCommand.time || 'Not specified'}
-                  </Text>
+                  <Text style={styles.resultItem}>Time: {lastCommand.time || 'Not specified'}</Text>
                 </ScrollView>
               </Card.Content>
             </Card>
           )}
-          
+
           <Button
             mode="contained"
             onPress={() => {
               setVoiceModalVisible(false);
               router.push({
                 pathname: '/service-selection',
-                params: { 
-                  command: lastCommand ? JSON.stringify(lastCommand) : JSON.stringify({} as CommandResult)
-                }
+                params: {
+                  command: lastCommand
+                    ? JSON.stringify(lastCommand)
+                    : JSON.stringify({} as CommandResult),
+                },
               });
             }}
             style={styles.modalButton}

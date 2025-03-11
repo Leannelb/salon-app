@@ -9,35 +9,26 @@ export default function BookingComplete() {
 
   return (
     <View style={styles.container}>
-      <Avatar.Icon 
-        icon="check-circle" 
-        size={120} 
-        style={styles.successIcon}
-        color="#fff"
-      />
-      
+      <Avatar.Icon icon="check-circle" size={120} style={styles.successIcon} color="#fff" />
+
       <Card style={styles.card}>
         <Card.Content>
           <Text variant="headlineMedium" style={styles.heading}>
             Booking Confirmed!
           </Text>
-          
+
           <Text style={styles.message}>
-            Your appointment has been successfully booked. We've sent a confirmation 
-            email with all the details.
+            Your appointment has been successfully booked. We&apos;ve sent a confirmation email with
+            all the details.
           </Text>
-          
+
           <Text style={styles.reminderText}>
             Please arrive 10 minutes before your appointment time.
           </Text>
         </Card.Content>
       </Card>
-      
-      <Button
-        mode="contained"
-        onPress={() => router.push('/(tabs)/booking')}
-        style={styles.button}
-      >
+
+      <Button mode="contained" onPress={() => router.push('/(tabs)/booking')} style={styles.button}>
         Book Another Appointment
       </Button>
       <Button
