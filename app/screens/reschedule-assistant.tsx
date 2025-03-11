@@ -1,6 +1,6 @@
 // screens/reschedule-assistant.tsx
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Alert } from 'react-native';
 import { Text, Card, Button, ActivityIndicator, Chip, Divider, Switch, IconButton } from 'react-native-paper';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as Speech from 'expo-speech';

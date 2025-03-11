@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList, Image } from 'react-native'; // ui elements
-import { Text, Card, Button, Title, Paragraph, Chip, Avatar } from 'react-native-paper'; //ui elements
+import { Text, Card, Button, Title, Chip } from 'react-native-paper'; //ui elements
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { CommandResult } from '../utils/voice-command-parser';
 

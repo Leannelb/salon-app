@@ -1,6 +1,6 @@
 // screens/branch-selection.tsx
 import React, { useState } from 'react';
-import { StyleSheet, View, FlatList, Image } from 'react-native';
+import { StyleSheet, View, FlatList } from 'react-native';
 import { Text, Card, Button, Title, Paragraph, Chip } from 'react-native-paper';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { CommandResult } from '../utils/voice-command-parser';

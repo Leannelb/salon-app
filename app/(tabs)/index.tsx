@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, ImageBackground, ScrollView } from "react-native";
 import { Link, useRouter } from 'expo-router';
-import { Button, useTheme, Card, IconButton, Modal, Portal } from 'react-native-paper';
+import { Button, Card, IconButton, Modal, Portal } from 'react-native-paper';
 import VoiceRecognition from '../components/voice-recognition';
 import { parseVoiceCommand, CommandResult } from '../utils/voice-command-parser';
-import { Dimensions, Platform } from 'react-native';
+import { Dimensions } from 'react-native';
 
 export default function Index() {
   const [lastCommand, setLastCommand] = useState<CommandResult | null>(null);
